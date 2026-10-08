@@ -27,8 +27,8 @@ extract → stage → quality → load → marts → report
 git clone https://github.com/imShoaibArshad/ibm-data-engineering-capstone.git
 cd ibm-data-engineering-capstone
 
-.\setup.ps1              # create .venv + install dependencies + editable install
-.\run_pipeline.ps1       # run the whole pipeline
+.\setup.ps1          # create .venv, install dependencies, register `retailde`
+.\run_pipeline.ps1   # run the whole pipeline
 ```
 
 Linux/macOS:
@@ -36,6 +36,18 @@ Linux/macOS:
 ```bash
 ./setup.sh && ./run_pipeline.sh
 ```
+
+`setup` installs the package **editable**, so `retailde` and
+`python -m retailde` both work — but only once the virtualenv is active.
+Activate it to use the short form of the commands below:
+
+```powershell
+.venv\Scripts\Activate.ps1      # PowerShell     (Windows)
+# source .venv/bin/activate     # bash           (Linux/macOS)
+```
+
+If activation is blocked by execution policy, call the interpreter directly —
+`.\.venv\Scripts\python.exe -m retailde ...` — everything works the same way.
 
 Then inspect the result:
 

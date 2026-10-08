@@ -46,6 +46,7 @@ Write-Host "`nInstalled:" -ForegroundColor Cyan
     ForEach-Object { "  $_" }
 
 Write-Host "`nNext steps:" -ForegroundColor Green
+Write-Host "  .venv\Scripts\Activate.ps1           # put retailde + python on PATH"
 Write-Host "  .\run_pipeline.ps1          # run the whole pipeline"
 Write-Host "  .\run_pipeline.ps1 -DryRun  # inspect the task DAG first"
 Write-Host "  python -m pytest tests       # run the test suite"
