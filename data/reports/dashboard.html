@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UK Retail Analytics &middot; Data Engineering Dashboard</title>
+<style>
+  :root { --ink:#08090a; --gold:#d9a441; --muted:#8b949e; --line:#e6e8eb; --bg:#fbfbfa; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink);
+         font:15px/1.6 "Segoe UI", Inter, system-ui, -apple-system, sans-serif; }
+  .wrap { max-width:1080px; margin:0 auto; padding:40px 24px 72px; }
+  header h1 { font-size:26px; margin:0 0 4px; letter-spacing:-.02em; }
+  header p { color:var(--muted); margin:0 0 6px; font-size:13.5px; }
+  .stamp { color:var(--muted); font-size:12px; margin-bottom:28px; }
+  .cards { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+            gap:12px; margin-bottom:34px; }
+  .card { background:#fff; border:1px solid var(--line); border-radius:9px;
+           padding:15px 16px; }
+  .card .label { color:var(--muted); font-size:11px; text-transform:uppercase;
+                  letter-spacing:.06em; }
+  .card .value { font-size:21px; font-weight:650; margin-top:5px;
+                  font-variant-numeric:tabular-nums; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(320px,1fr));
+           gap:22px; margin-bottom:30px; }
+  figure { margin:0; background:#fff; border:1px solid var(--line);
+            border-radius:9px; padding:12px; }
+  figure img { width:100%; height:auto; display:block; }
+  h2 { font-size:16px; margin:34px 0 12px; letter-spacing:-.01em; }
+  table { width:100%; border-collapse:collapse; background:#fff;
+           border:1px solid var(--line); border-radius:9px; overflow:hidden;
+           font-size:13px; }
+  th { text-align:left; background:#f4f5f6; color:var(--muted); font-weight:600;
+        font-size:11px; text-transform:uppercase; letter-spacing:.05em;
+        padding:9px 12px; border-bottom:1px solid var(--line); }
+  td { padding:8px 12px; border-bottom:1px solid var(--line);
+        font-variant-numeric:tabular-nums; }
+  tbody tr:last-child td { border-bottom:none; }
+  td:first-child { font-variant-numeric:normal; }
+  footer { margin-top:40px; padding-top:18px; border-top:1px solid var(--line);
+            color:var(--muted); font-size:12px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>UK Retail Analytics</h1>
+    <p>Data engineering capstone &mdash; four heterogeneous sources
+       (bulk archive, two REST APIs, one HTML scrape) modelled into a
+       dimensional warehouse.</p>
+    <div class="stamp">2009-12-01 &rarr; 2011-12-09 &middot;
+      739 calendar days &middot; generated 2026-10-08 17:26 UTC</div>
+  </header>
+
+  <div class="cards"><div class="card"><div class="label">Revenue (valid sales)</div><div class="value">£20,476,260.45</div></div><div class="card"><div class="label">Orders</div><div class="value">40,077</div></div><div class="card"><div class="label">Identified customers</div><div class="value">5,942</div></div><div class="card"><div class="label">Units sold</div><div class="value">11,205,148</div></div><div class="card"><div class="label">Fact rows</div><div class="value">1,033,036</div></div><div class="card"><div class="label">Countries</div><div class="value">43</div></div></div>
+
+  <div class="grid"><figure><img src="monthly_revenue.png" alt="monthly_revenue.png"></figure><figure><img src="top_products.png" alt="top_products.png"></figure><figure><img src="rfm_segments.png" alt="rfm_segments.png"></figure><figure><img src="weather_scatter.png" alt="weather_scatter.png"></figure><figure><img src="regions.png" alt="regions.png"></figure></div>
+
+  <h2>Monthly revenue</h2>
+  <table><thead><tr><th>Month</th><th>Revenue</th><th>Orders</th></tr></thead><tbody><tr><td>2009-12</td><td>£822,483.95</td><td>1,682</td></tr><tr><td>2010-01</td><td>£651,155.11</td><td>1,105</td></tr><tr><td>2010-02</td><td>£551,504.73</td><td>1,201</td></tr><tr><td>2010-03</td><td>£830,915.26</td><td>1,681</td></tr><tr><td>2010-04</td><td>£678,875.25</td><td>1,462</td></tr><tr><td>2010-05</td><td>£657,705.50</td><td>1,500</td></tr><tr><td>2010-06</td><td>£749,537.31</td><td>1,645</td></tr><tr><td>2010-07</td><td>£648,810.27</td><td>1,529</td></tr><tr><td>2010-08</td><td>£695,251.91</td><td>1,425</td></tr><tr><td>2010-09</td><td>£921,696.99</td><td>1,839</td></tr><tr><td>2010-10</td><td>£1,161,902.22</td><td>2,301</td></tr><tr><td>2010-11</td><td>£1,464,293.14</td><td>2,747</td></tr><tr><td>2010-12</td><td>£821,452.73</td><td>1,559</td></tr><tr><td>2011-01</td><td>£689,811.61</td><td>1,086</td></tr><tr><td>2011-02</td><td>£522,545.56</td><td>1,100</td></tr><tr><td>2011-03</td><td>£716,215.26</td><td>1,454</td></tr><tr><td>2011-04</td><td>£536,968.49</td><td>1,246</td></tr><tr><td>2011-05</td><td>£769,296.61</td><td>1,681</td></tr><tr><td>2011-06</td><td>£760,547.01</td><td>1,533</td></tr><tr><td>2011-07</td><td>£718,076.12</td><td>1,475</td></tr><tr><td>2011-08</td><td>£757,841.38</td><td>1,361</td></tr><tr><td>2011-09</td><td>£1,056,435.19</td><td>1,837</td></tr><tr><td>2011-10</td><td>£1,151,263.73</td><td>2,040</td></tr><tr><td>2011-11</td><td>£1,503,866.78</td><td>2,769</td></tr><tr><td>2011-12</td><td>£637,808.33</td><td>819</td></tr></tbody></table>
+
+  <h2>Customer segments (RFM)</h2>
+  <table><thead><tr><th>Segment</th><th>Customers</th><th>Revenue</th></tr></thead><tbody><tr><td>Champions</td><td>1,451</td><td>£11,975,857.64</td></tr><tr><td>Potential</td><td>1,285</td><td>£2,297,994.99</td></tr><tr><td>Needs Attention</td><td>1,176</td><td>£1,397,309.61</td></tr><tr><td>Loyal</td><td>790</td><td>£854,615.56</td></tr><tr><td>At Risk</td><td>222</td><td>£430,824.40</td></tr><tr><td>Lost</td><td>954</td><td>£418,202.05</td></tr></tbody></table>
+
+  <h2>Revenue by region</h2>
+  <table><thead><tr><th>Region</th><th>Revenue</th><th>Orders</th></tr></thead><tbody><tr><td>Europe</td><td>£20,149,550.28</td><td>39,814</td></tr><tr><td>Oceania</td><td>£169,283.46</td><td>95</td></tr><tr><td>Asia</td><td>£96,215.54</td><td>63</td></tr><tr><td>Middle East</td><td>£27,587.73</td><td>39</td></tr><tr><td>North America</td><td>£15,039.45</td><td>30</td></tr><tr><td>Unknown</td><td>£12,227.41</td><td>28</td></tr><tr><td>Africa</td><td>£4,944.71</td><td>6</td></tr><tr><td>South America</td><td>£1,411.87</td><td>2</td></tr></tbody></table>
+
+  <footer>
+    Source: UCI Online Retail II (a UK-based online retailer, 2009&ndash;2011),
+    Open-Meteo, ECB via Frankfurter, Bank of England.
+    Facts exclude cancellations, returns and non-positive prices from revenue
+    while retaining every row in <code>fact_transaction</code>.
+  </footer>
+</div>
+</body>
+</html>

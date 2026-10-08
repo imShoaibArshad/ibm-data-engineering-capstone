@@ -1,0 +1,128 @@
+# ---------------------------------------------------------------------------
+# Source catalogue for the IBM Data Engineering Capstone.
+#
+# Four sources, four different ingestion patterns -- this is deliberate: a
+# data engineer's job is rarely one protocol. Every source below is public,
+# key-free and reproducible, so anyone can clone the repo and re-run it.
+#
+#   bulk_file  : a large archive downloaded over HTTP, unpacked locally
+#   rest_api   : paginated/parameterised JSON endpoint
+#   html_page  : server-rendered HTML parsed with a selector
+#
+# `id` is used everywhere downstream (manifest keys, cache filenames, tests).
+# ---------------------------------------------------------------------------
+
+project: uk-retail-analytics
+warehouse: data/warehouse/retail.duckdb
+
+sources:
+
+  # 1. Bulk file -- the fact spine -------------------------------------------
+  # Real UK online-retailer transaction log published by the UCI ML Repository.
+  # Two worksheets, 1,067,365 rows, 40 countries, Dec 2009 - Dec 2011.
+  # Known dirt (documented, not hidden): 22.8% null Customer ID, 19,494
+  # cancelled invoices, 22,950 negative quantities, StockCode typed as a mix
+  # of integers and strings.
+  - id: uci_online_retail
+    name: UCI Online Retail II
+    adapter: bulk_file
+    enabled: true
+    url: https://archive.ics.uci.edu/static/public/502/online+retail+ii.zip
+    format: zip
+    extract_member: online_retail_II.xlsx
+    cache_as: uci_online_retail_ii.zip
+    timeout_seconds: 90
+    retries: 4
+    description: >-
+      Online Retail II transaction log from a UK-based online retailer.
+      Contains invoice lines with quantity, unit price, customer and country.
+
+  # 2. REST API -- calendar/weather context -----------------------------------
+  # Open-Meteo historical archive. No API key, no quota for our volume.
+  - id: open_meteo_london
+    name: Open-Meteo London Daily Weather
+    adapter: rest_api
+    enabled: true
+    url: https://archive-api.open-meteo.com/v1/archive
+    params:
+      latitude: 51.5074
+      longitude: -0.1278
+      start_date: "{start_date}"
+      end_date: "{end_date}"
+      daily: temperature_2m_max,temperature_2m_min,precipitation_sum
+      timezone: auto
+    date_field: daily.time
+    start_date: "2009-12-01"
+    end_date: "2011-12-09"
+    cache_as: open_meteo_london.json
+    timeout_seconds: 45
+    retries: 3
+    description: >-
+      Daily max/min temperature and precipitation for London. Used to test the
+      "did bad weather move sales?" question against the transaction fact table.
+
+  # 3. REST API -- currency ----------------------------------------------------
+  # European Central Bank rates via Frankfurter. GBP is the source currency
+  # because the retailer is UK-based; we derive USD and EUR revenue.
+  - id: ecb_fx_gbp
+    name: ECB Daily FX Rates (GBP base)
+    adapter: rest_api
+    enabled: true
+    url: https://api.frankfurter.app/{start_date}..{end_date}
+    params:
+      from: GBP
+      to: USD,EUR
+    date_field: rates
+    start_date: "2009-12-01"
+    end_date: "2011-12-09"
+    cache_as: ecb_fx_gbp.json
+    timeout_seconds: 45
+    retries: 3
+    description: >-
+      ECB reference rates, GBP base, USD and EUR quotes. Lets revenue be
+      reported in a currency other than the transaction currency.
+
+  # 4. HTML scrape -- an effective-dated (SCD2) reference series ---------------
+  # The Bank of England publishes its official Bank Rate decision history as a
+  # server-rendered HTML table. Scraping it exercises the html_page adapter,
+  # and the data is economically meaningful: policy rate shapes consumer
+  # credit and therefore retail spending.
+  #
+  # It is also deliberately an *effective-dated* series -- each row is "rate R
+  # in force from date D until the next decision". Turning change-events into
+  # a per-day value requires a forward-fill join, which is exactly how slowly
+  # changing dimensions behave in a real warehouse.
+  #
+  # Chosen over GOV.UK bank holidays, which parses cleanly but only publishes
+  # 2019-2028 -- zero overlap with this dataset's 2009-2011 window.
+  - id: boe_bank_rate
+    name: Bank of England Official Bank Rate
+    adapter: html_page
+    enabled: true
+    url: https://www.bankofengland.co.uk/boeapps/database/Bank-Rate.asp
+    cache_as: boe_bank_rate.html
+    date_column: Date Changed
+    rate_column: Rate
+    table_header_contains: Date Changed
+    timeout_seconds: 45
+    retries: 3
+    description: >-
+      Every official Bank Rate decision since 1975 as an HTML table
+      (Date Changed / Rate). Joined to dim_date as an as-of lookup so each
+      trading day carries the rate that was in force on that day.
+
+# ---------------------------------------------------------------------------
+# Data-quality gates. Each check runs after staging AND after load; any
+# failure aborts the pipeline with a non-zero exit code.
+#
+# Thresholds are set from the observed profile of this dataset, not guessed:
+# null_customer_id_rate is 0.228 in the raw source, so the gate is 0.25 --
+# it allows the known dirt through but fails if nulls get materially worse.
+# ---------------------------------------------------------------------------
+quality:
+  null_customer_id_rate_max: 0.25
+  duplicate_natural_key_rate_max: 0.001
+  min_transaction_rows: 1000000
+  weather_coverage_min: 0.95
+  fx_coverage_min: 0.95
+  require_referential_integrity: true

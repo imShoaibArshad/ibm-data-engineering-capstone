@@ -1,0 +1,13 @@
+{
+  "revenue": 20476260.45,
+  "orders": 40077,
+  "customers": 5942,
+  "units": 11205148,
+  "products": 5304,
+  "countries": 43,
+  "fact_rows": 1033036,
+  "dim_customers": 5943,
+  "calendar_days": 739,
+  "date_from": "2009-12-01",
+  "date_to": "2011-12-09"
+}

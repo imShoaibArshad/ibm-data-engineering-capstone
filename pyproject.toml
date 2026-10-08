@@ -1,0 +1,51 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "retailde"
+version = "1.0.0"
+description = "UK retail analytics -- IBM Data Engineering Capstone (local-first data platform)"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Muhammad Shoaib Arshad" }]
+keywords = ["data-engineering", "duckdb", "etl", "data-warehouse", "capstone"]
+
+# Kept in sync with requirements.txt. The dependency list is deliberately
+# short: no Airflow, no Spark, no cloud SDKs -- the whole point is that this
+# runs on one laptop with no cloud account.
+dependencies = [
+    "duckdb>=1.1",
+    "pandas>=2.2",
+    "pyarrow>=15",
+    "numpy>=1.26",
+    "requests>=2.31",
+    "beautifulsoup4>=4.12",
+    "lxml>=5.0",
+    "openpyxl>=3.1",
+    "networkx>=3.2",
+    "PyYAML>=6.0",
+    "click>=8.1",
+    "tqdm>=4.66",
+    "matplotlib>=3.8",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+
+[project.scripts]
+retailde = "retailde.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/imShoaibArshad/ibm-data-engineering-capstone"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+# src-layout: make the package importable without an editable install, so
+# `pytest` works straight after a clone.
+pythonpath = ["src"]
+testpaths = ["tests"]
+addopts = "-q"
